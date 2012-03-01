@@ -1,6 +1,16 @@
+from django.template import Context, loader
 from polls.models import Poll
+from django.http import HttpResponse
 from polls.models import Choice
 from django.contrib import admin
+
+def index(request):
+    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
+    t = loader.get_template('polls/index.html')
+    c = Context({
+        'latest_poll_list': latest_poll_list,
+    })
+    return HttpResponse(t.render(c))
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -18,3 +28,5 @@ class PollAdmin(admin.ModelAdmin):
     date_hierarchy = 'pub_date'
 
 admin.site.register(Poll, PollAdmin)
+
+
